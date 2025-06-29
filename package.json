@@ -1,8 +1,9 @@
 {
-  "name": "vite-react-typescript-starter",
+  "name": "writerspace",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "author": "vaibhav kulshreshta github:https://github.com/Vaibhavkulshrestha12",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
