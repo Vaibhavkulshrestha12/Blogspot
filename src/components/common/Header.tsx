@@ -22,7 +22,7 @@ const Header: React.FC = () => {
       } backdrop-blur-sm border-b sticky top-0 z-40 transition-colors`}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            
+            {/* Logo - Responsive */}
             <Link 
               to="/" 
               className={`flex items-center space-x-2 ${
@@ -32,17 +32,17 @@ const Header: React.FC = () => {
               <div className="p-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 group-hover:from-amber-400 group-hover:to-orange-400 transition-all duration-300">
                 <PenTool className="h-5 w-5 text-white" />
               </div>
-              
+              {/* Show text only on medium screens and up */}
               <span className={`text-xl font-bold hidden md:block ${
                 theme === 'dark' 
                   ? 'bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent'
                   : 'bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent'
               }`}>
-                Blogspot
+                WriterSpace
               </span>
             </Link>
 
-            
+            {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-6">
               {!isAdminRoute && (
                 <>
@@ -71,7 +71,7 @@ const Header: React.FC = () => {
                 </>
               )}
 
-             
+              {/* Theme Toggle */}
               <button
                 onClick={toggleTheme}
                 className={`p-2 rounded-lg transition-colors ${
@@ -136,9 +136,9 @@ const Header: React.FC = () => {
               )}
             </nav>
 
-            
+            {/* Mobile/Tablet Controls */}
             <div className="lg:hidden flex items-center space-x-2">
-             
+              {/* Theme Toggle for Mobile */}
               <button
                 onClick={toggleTheme}
                 className={`p-2 rounded-lg transition-colors ${
@@ -150,7 +150,7 @@ const Header: React.FC = () => {
                 {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </button>
 
-             
+              {/* Sign In Button for Mobile (when not authenticated) */}
               {!isAuthenticated && (
                 <button
                   onClick={() => setShowAuthModal(true)}
@@ -173,7 +173,7 @@ const Header: React.FC = () => {
             </div>
           </div>
 
-          
+          {/* Mobile Menu */}
           {mobileMenuOpen && (
             <div className={`lg:hidden border-t ${
               theme === 'dark' ? 'border-gray-800 bg-gray-900/95' : 'border-gray-200 bg-white/95'

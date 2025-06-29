@@ -37,7 +37,7 @@ const FloatingSocials: React.FC = () => {
     <div className="fixed left-2 sm:left-4 top-1/2 transform -translate-y-1/2 z-30">
       <div className="flex items-center">
         
-        
+       
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className={`p-2 sm:p-3 rounded-full transition-all duration-300 shadow-lg ${

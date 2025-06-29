@@ -28,7 +28,8 @@ const ReactionButtons: React.FC<ReactionButtonsProps> = ({ post }) => {
     if (hasReacted || loading) return;
     
     setLoading(true);
-
+    
+   
     setLocalReactions(prev => ({
       ...prev,
       [type]: prev[type] + 1
@@ -36,7 +37,7 @@ const ReactionButtons: React.FC<ReactionButtonsProps> = ({ post }) => {
     
     const success = await updateReactions(post.id, type);
     if (!success) {
-      
+  
       setLocalReactions(prev => ({
         ...prev,
         [type]: prev[type] - 1
@@ -54,7 +55,6 @@ const ReactionButtons: React.FC<ReactionButtonsProps> = ({ post }) => {
     setLoading(true);
     setShared(true);
 
-    
     setLocalReactions(prev => ({
       ...prev,
       shares: prev.shares + 1
@@ -77,13 +77,13 @@ const ReactionButtons: React.FC<ReactionButtonsProps> = ({ post }) => {
         }));
       }
     } else {
-      
+    
       try {
         await navigator.clipboard.writeText(url);
         await updateReactions(post.id, 'shares');
         setTimeout(() => setShared(false), 2000);
       } catch (error) {
-        
+       
         const textArea = document.createElement('textarea');
         textArea.value = url;
         document.body.appendChild(textArea);

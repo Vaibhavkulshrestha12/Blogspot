@@ -19,7 +19,7 @@ const ContactPage: React.FC = () => {
     setLoading(true);
     setError('');
 
-    
+    // Simulate form submission
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
       setSubmitted(true);
@@ -40,7 +40,7 @@ const ContactPage: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-   
+      {/* Hero Section */}
       <div className="text-center mb-16">
         <h1 className={`text-4xl sm:text-5xl font-bold mb-6 ${
           theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -58,7 +58,7 @@ const ContactPage: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        
+        {/* Contact Form */}
         <div className={`rounded-2xl p-8 border ${
           theme === 'dark'
             ? 'bg-gray-800/50 border-gray-700/50'
@@ -217,7 +217,7 @@ const ContactPage: React.FC = () => {
           )}
         </div>
 
-       
+        {/* Contact Information */}
         <div className="space-y-8">
           <div className={`rounded-2xl p-8 border ${
             theme === 'dark'

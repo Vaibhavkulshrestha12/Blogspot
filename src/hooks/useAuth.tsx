@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           username: userData?.username || firebaseUser.displayName || '',
           displayName: firebaseUser.displayName || userData?.displayName || '',
           photoURL: firebaseUser.photoURL || '',
-          role: userData?.role || 'user', 
+          role: userData?.role || 'user', // Default to 'user', admin role must be explicitly set in Firestore
           createdAt: userData?.createdAt || new Date().toISOString()
         };
 
@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         username: firebaseUser.displayName || '',
         displayName: firebaseUser.displayName || '',
         photoURL: firebaseUser.photoURL || '',
-        role: 'user', 
+        role: 'user', // Default role - admin must be set manually
         createdAt: new Date().toISOString(),
         ...additionalData
       };

@@ -63,72 +63,7 @@ const PostView: React.FC = () => {
   };
 
   const renderContent = (content: string) => {
-    return content.split('\n').map((paragraph, index) => {
-      if (paragraph.startsWith('# ')) {
-        return (
-          <h1 key={index} className={`text-4xl font-bold mb-6 mt-8 first:mt-0 ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>
-            {paragraph.substring(2)}
-          </h1>
-        );
-      }
-      if (paragraph.startsWith('## ')) {
-        return (
-          <h2 key={index} className={`text-3xl font-bold mb-4 mt-8 ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>
-            {paragraph.substring(3)}
-          </h2>
-        );
-      }
-      if (paragraph.startsWith('### ')) {
-        return (
-          <h3 key={index} className={`text-2xl font-bold mb-4 mt-6 ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>
-            {paragraph.substring(4)}
-          </h3>
-        );
-      }
-      if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
-        return (
-          <p key={index} className={`text-lg mb-4 leading-relaxed font-bold ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-          }`}>
-            {paragraph.substring(2, paragraph.length - 2)}
-          </p>
-        );
-      }
-      if (paragraph.trim() === '') {
-        return <div key={index} className="mb-2" />;
-      }
-      if (paragraph.match(/^\d+\./)) {
-        return (
-          <li key={index} className={`text-lg mb-2 leading-relaxed ml-4 ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-          }`}>
-            {paragraph.replace(/^\d+\.\s*/, '')}
-          </li>
-        );
-      }
-      if (paragraph.startsWith('- ')) {
-        return (
-          <li key={index} className={`text-lg mb-2 leading-relaxed ml-4 list-disc ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-          }`}>
-            {paragraph.substring(2)}
-          </li>
-        );
-      }
-      return (
-        <p key={index} className={`text-lg mb-4 leading-relaxed ${
-          theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-        }`}>
-          {paragraph}
-        </p>
-      );
-    });
+    return <div dangerouslySetInnerHTML={{ __html: content }} />;
   };
 
   return (
@@ -139,17 +74,18 @@ const PostView: React.FC = () => {
           : 'bg-white border-gray-200 shadow-lg'
       }`}>
         {post.imageUrl && (
-          <div className="aspect-video overflow-hidden">
+          <div className="w-full overflow-hidden" style={{ aspectRatio: '16/9', maxHeight: '500px' }}>
             <img 
               src={post.imageUrl} 
               alt={post.title}
               className="w-full h-full object-cover"
+              style={{ objectFit: 'cover' }}
             />
           </div>
         )}
         
         <div className="p-8 sm:p-12">
-         
+          {/* Header */}
           <header className="mb-8">
             <div className={`flex items-center space-x-4 text-sm mb-6 ${
               theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
@@ -207,12 +143,14 @@ const PostView: React.FC = () => {
             )}
           </header>
 
-          
-          <div className="prose prose-lg max-w-none">
+          {/* Content */}
+          <div className={`prose prose-lg max-w-none ${
+            theme === 'dark' ? 'prose-invert' : ''
+          }`}>
             {renderContent(post.content)}
           </div>
 
-          
+          {/* Reactions */}
           <div className={`mt-12 pt-8 border-t ${
             theme === 'dark' ? 'border-gray-700/50' : 'border-gray-200'
           }`}>
@@ -220,6 +158,41 @@ const PostView: React.FC = () => {
           </div>
         </div>
       </article>
+
+      {/* Custom styles for content rendering */}
+      <style jsx global>{`
+        .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+          color: ${theme === 'dark' ? '#f3f4f6' : '#111827'};
+        }
+        .prose p, .prose li {
+          color: ${theme === 'dark' ? '#d1d5db' : '#374151'};
+        }
+        .prose blockquote {
+          border-left-color: ${theme === 'dark' ? '#f59e0b' : '#f59e0b'};
+          color: ${theme === 'dark' ? '#d1d5db' : '#374151'};
+        }
+        .prose code {
+          background-color: ${theme === 'dark' ? '#374151' : '#f3f4f6'};
+          color: ${theme === 'dark' ? '#f3f4f6' : '#111827'};
+        }
+        .prose pre {
+          background-color: ${theme === 'dark' ? '#1f2937' : '#f9fafb'};
+        }
+        .prose a {
+          color: ${theme === 'dark' ? '#fbbf24' : '#f59e0b'};
+        }
+        .prose a:hover {
+          color: ${theme === 'dark' ? '#f59e0b' : '#d97706'};
+        }
+        .prose img {
+          width: 100%;
+          height: auto;
+          border-radius: 0.5rem;
+          margin: 1.5rem 0;
+          max-height: 500px;
+          object-fit: cover;
+        }
+      `}</style>
     </div>
   );
 };

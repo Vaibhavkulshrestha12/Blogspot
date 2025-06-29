@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Save, Eye, EyeOff, ArrowLeft, FileText, Link as LinkIcon, X } from 'lucide-react';
+import { Save, Eye, EyeOff, ArrowLeft, FileText, Link as LinkIcon, X, Upload } from 'lucide-react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import { useBlog } from '../../hooks/useBlog';
 import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -31,6 +33,7 @@ const PostEditor: React.FC = () => {
   const [tagInput, setTagInput] = useState('');
   const [showPreview, setShowPreview] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
 
   useEffect(() => {
     if (existingPost) {
@@ -50,7 +53,8 @@ const PostEditor: React.FC = () => {
 
   const calculateReadTime = (content: string): number => {
     const wordsPerMinute = 200;
-    const wordCount = content.trim().split(/\s+/).length;
+    const text = content.replace(/<[^>]*>/g, ''); 
+    const wordCount = text.trim().split(/\s+/).length;
     return Math.max(1, Math.ceil(wordCount / wordsPerMinute));
   };
 
@@ -60,6 +64,40 @@ const PostEditor: React.FC = () => {
       content,
       readTime: calculateReadTime(content)
     }));
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+  
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file.');
+      return;
+    }
+
+    
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size should be less than 5MB.');
+      return;
+    }
+
+    setImageUploading(true);
+
+    try {
+      
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const imageUrl = event.target?.result as string;
+        setPost(prev => ({ ...prev, imageUrl }));
+        setImageUploading(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('Failed to upload image. Please try again.');
+      setImageUploading(false);
+    }
   };
 
   const handleAddTag = (e: React.KeyboardEvent) => {
@@ -95,7 +133,7 @@ const PostEditor: React.FC = () => {
       const postData = {
         ...post,
         status,
-        excerpt: post.excerpt || post.content.substring(0, 150) + '...'
+        excerpt: post.excerpt || post.content.replace(/<[^>]*>/g, '').substring(0, 150) + '...'
       };
 
       if (isEditing) {
@@ -113,77 +151,43 @@ const PostEditor: React.FC = () => {
   };
 
   const renderPreview = (content: string) => {
-    return content.split('\n').map((paragraph, index) => {
-      if (paragraph.startsWith('# ')) {
-        return (
-          <h1 key={index} className={`text-3xl font-bold mb-4 mt-6 first:mt-0 ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>
-            {paragraph.substring(2)}
-          </h1>
-        );
-      }
-      if (paragraph.startsWith('## ')) {
-        return (
-          <h2 key={index} className={`text-2xl font-bold mb-3 mt-5 ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>
-            {paragraph.substring(3)}
-          </h2>
-        );
-      }
-      if (paragraph.startsWith('### ')) {
-        return (
-          <h3 key={index} className={`text-xl font-bold mb-3 mt-4 ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>
-            {paragraph.substring(4)}
-          </h3>
-        );
-      }
-      if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
-        return (
-          <p key={index} className={`mb-3 font-bold ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-          }`}>
-            {paragraph.substring(2, paragraph.length - 2)}
-          </p>
-        );
-      }
-      if (paragraph.trim() === '') {
-        return <div key={index} className="mb-2" />;
-      }
-      if (paragraph.match(/^\d+\./)) {
-        return (
-          <li key={index} className={`mb-2 ml-4 list-decimal ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-          }`}>
-            {paragraph.replace(/^\d+\.\s*/, '')}
-          </li>
-        );
-      }
-      if (paragraph.startsWith('- ')) {
-        return (
-          <li key={index} className={`mb-2 ml-4 list-disc ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-          }`}>
-            {paragraph.substring(2)}
-          </li>
-        );
-      }
-      return (
-        <p key={index} className={`mb-3 leading-relaxed ${
-          theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-        }`}>
-          {paragraph}
-        </p>
-      );
-    });
+    return <div dangerouslySetInnerHTML={{ __html: content }} />;
   };
+
+ 
+  const modules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+      [{ 'font': [] }],
+      [{ 'size': ['small', false, 'large', 'huge'] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'color': [] }, { 'background': [] }],
+      [{ 'script': 'sub'}, { 'script': 'super' }],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      [{ 'indent': '-1'}, { 'indent': '+1' }],
+      [{ 'direction': 'rtl' }],
+      [{ 'align': [] }],
+      ['link', 'image', 'video'],
+      ['blockquote', 'code-block'],
+      ['clean']
+    ]
+  };
+
+  const formats = [
+    'header', 'font', 'size',
+    'bold', 'italic', 'underline', 'strike',
+    'color', 'background',
+    'script',
+    'list', 'bullet',
+    'indent',
+    'direction', 'align',
+    'link', 'image', 'video',
+    'blockquote', 'code-block'
+  ];
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      
+    
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center space-x-4">
           <button
@@ -246,7 +250,7 @@ const PostEditor: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-     
+        
         <div className="space-y-6">
           <div className={`rounded-xl p-6 border ${
             theme === 'dark'
@@ -303,24 +307,51 @@ const PostEditor: React.FC = () => {
                 <label className={`block text-sm font-medium mb-2 ${
                   theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                 }`}>
-                  Featured Image URL (Optional)
+                  Featured Image
                 </label>
                 <div className="space-y-3">
-                  <div className="relative">
-                    <LinkIcon className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 ${
-                      theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
-                    }`} />
-                    <input
-                      type="url"
-                      value={post.imageUrl}
-                      onChange={(e) => setPost(prev => ({ ...prev, imageUrl: e.target.value }))}
-                      className={`w-full pl-10 pr-4 py-3 rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent ${
-                        theme === 'dark'
-                          ? 'bg-gray-700/50 border-gray-600 text-white placeholder-gray-400'
-                          : 'bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500'
-                      }`}
-                      placeholder="https://example.com/image.jpg"
-                    />
+                  <div className="flex space-x-3">
+                    <div className="relative flex-1">
+                      <LinkIcon className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 ${
+                        theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                      }`} />
+                      <input
+                        type="url"
+                        value={post.imageUrl}
+                        onChange={(e) => setPost(prev => ({ ...prev, imageUrl: e.target.value }))}
+                        className={`w-full pl-10 pr-4 py-3 rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent ${
+                          theme === 'dark'
+                            ? 'bg-gray-700/50 border-gray-600 text-white placeholder-gray-400'
+                            : 'bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500'
+                        }`}
+                        placeholder="https://example.com/image.jpg"
+                      />
+                    </div>
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        disabled={imageUploading}
+                      />
+                      <button
+                        type="button"
+                        disabled={imageUploading}
+                        className={`flex items-center space-x-2 px-4 py-3 rounded-lg border transition-all duration-300 ${
+                          theme === 'dark'
+                            ? 'bg-gray-700/50 border-gray-600 text-gray-300 hover:bg-gray-700'
+                            : 'bg-gray-50 border-gray-300 text-gray-600 hover:bg-gray-100'
+                        } ${imageUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      >
+                        {imageUploading ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-600 border-t-amber-500" />
+                        ) : (
+                          <Upload className="h-4 w-4" />
+                        )}
+                        <span className="hidden sm:inline">Upload</span>
+                      </button>
+                    </div>
                   </div>
                   {post.imageUrl && (
                     <div className="relative">
@@ -436,26 +467,20 @@ const PostEditor: React.FC = () => {
             }`}>
               Content
             </h2>
-            <textarea
-              value={post.content}
-              onChange={(e) => handleContentChange(e.target.value)}
-              rows={20}
-              className={`w-full px-4 py-3 rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent resize-none font-mono text-sm ${
-                theme === 'dark'
-                  ? 'bg-gray-700/50 border-gray-600 text-white placeholder-gray-400'
-                  : 'bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-500'
-              }`}
-              placeholder="Write your post content here... (Supports basic Markdown)"
-            />
-            <p className={`text-xs mt-2 ${
-              theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
-            }`}>
-              Supports: # H1, ## H2, ### H3, **bold**, bullet points (- ), numbered lists (1. )
-            </p>
+            <div className={`quill-editor ${theme === 'dark' ? 'quill-dark' : ''}`}>
+              <ReactQuill
+                theme="snow"
+                value={post.content}
+                onChange={handleContentChange}
+                modules={modules}
+                formats={formats}
+                style={{ height: '400px', marginBottom: '50px' }}
+                placeholder="Write your post content here..."
+              />
+            </div>
           </div>
         </div>
 
-     
         {showPreview && (
           <div className={`rounded-xl p-6 border ${
             theme === 'dark'
@@ -485,11 +510,67 @@ const PostEditor: React.FC = () => {
                   {post.title}
                 </h1>
               )}
-              {renderPreview(post.content)}
+              <div className={`${
+                theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+              }`}>
+                {renderPreview(post.content)}
+              </div>
             </div>
           </div>
         )}
       </div>
+
+     
+      <style jsx global>{`
+        .quill-dark .ql-toolbar {
+          border-color: #374151 !important;
+          background-color: #1f2937 !important;
+        }
+        .quill-dark .ql-toolbar .ql-stroke {
+          stroke: #9ca3af !important;
+        }
+        .quill-dark .ql-toolbar .ql-fill {
+          fill: #9ca3af !important;
+        }
+        .quill-dark .ql-toolbar button:hover .ql-stroke {
+          stroke: #f3f4f6 !important;
+        }
+        .quill-dark .ql-toolbar button:hover .ql-fill {
+          fill: #f3f4f6 !important;
+        }
+        .quill-dark .ql-container {
+          border-color: #374151 !important;
+          background-color: #1f2937 !important;
+        }
+        .quill-dark .ql-editor {
+          color: #f3f4f6 !important;
+        }
+        .quill-dark .ql-editor.ql-blank::before {
+          color: #9ca3af !important;
+        }
+        .quill-dark .ql-tooltip {
+          background-color: #374151 !important;
+          border-color: #4b5563 !important;
+          color: #f3f4f6 !important;
+        }
+        .quill-dark .ql-tooltip input {
+          background-color: #1f2937 !important;
+          border-color: #4b5563 !important;
+          color: #f3f4f6 !important;
+        }
+        
+        /* Fix React Quill warnings */
+        .ql-editor {
+          line-height: 1.6;
+        }
+        .ql-editor p {
+          margin-bottom: 1em;
+        }
+        .ql-editor h1, .ql-editor h2, .ql-editor h3, .ql-editor h4, .ql-editor h5, .ql-editor h6 {
+          margin-top: 1.5em;
+          margin-bottom: 0.5em;
+        }
+      `}</style>
     </div>
   );
 };

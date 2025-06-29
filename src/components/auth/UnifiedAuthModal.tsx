@@ -82,7 +82,7 @@ const UnifiedAuthModal: React.FC<UnifiedAuthModalProps> = ({ isOpen, onClose }) 
           : 'bg-white/90 border-gray-200/50'
       } backdrop-blur-sm rounded-2xl p-8 w-full max-w-md border shadow-2xl`}>
         
-        
+        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
             <div className={`p-2 rounded-lg ${
@@ -110,7 +110,7 @@ const UnifiedAuthModal: React.FC<UnifiedAuthModalProps> = ({ isOpen, onClose }) 
           </button>
         </div>
 
-        
+        {/* Mode Toggle */}
         <div className={`flex rounded-lg p-1 mb-6 ${
           theme === 'dark' ? 'bg-gray-700/50' : 'bg-gray-100'
         }`}>

@@ -78,7 +78,7 @@ const PrivacyPage: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-     
+      {/* Hero Section */}
       <div className="text-center mb-16">
         <h1 className={`text-4xl sm:text-5xl font-bold mb-6 ${
           theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -105,6 +105,7 @@ const PrivacyPage: React.FC = () => {
         </p>
       </div>
 
+      {/* Privacy Sections */}
       <div className="space-y-8">
         {sections.map((section, index) => (
           <div key={index} className={`rounded-2xl p-8 border ${
@@ -138,6 +139,7 @@ const PrivacyPage: React.FC = () => {
         ))}
       </div>
 
+      {/* Additional Information */}
       <div className={`mt-12 p-8 rounded-2xl border ${
         theme === 'dark'
           ? 'bg-gray-800/50 border-gray-700/50'
@@ -176,7 +178,7 @@ const PrivacyPage: React.FC = () => {
         </div>
       </div>
 
-      
+      {/* Changes Notice */}
       <div className={`mt-8 p-6 rounded-xl border ${
         theme === 'dark'
           ? 'bg-amber-500/10 border-amber-500/20'

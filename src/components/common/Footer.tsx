@@ -19,6 +19,13 @@ const Footer: React.FC = () => {
       return;
     }
 
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
     const success = await subscribeToNewsletter(email);
     if (success) {
       setSubscribed(true);
@@ -40,7 +47,7 @@ const Footer: React.FC = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           
-          
+          {/* Brand Section */}
           <div className="lg:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
               <div className="p-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500">
@@ -51,7 +58,7 @@ const Footer: React.FC = () => {
                   ? 'bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent'
                   : 'bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent'
               }`}>
-                Blogspot
+                WriterSpace
               </span>
             </div>
             <p className={`text-sm leading-relaxed mb-6 max-w-md ${
@@ -61,7 +68,7 @@ const Footer: React.FC = () => {
               insightful essays, and beautiful poetry crafted for the curious mind.
             </p>
             
-            
+            {/* Newsletter Subscription */}
             <div className="space-y-3">
               <h3 className={`font-semibold text-sm sm:text-base ${
                 theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -107,7 +114,7 @@ const Footer: React.FC = () => {
             </div>
           </div>
 
-          
+          {/* Quick Links */}
           <div>
             <h3 className={`font-semibold mb-4 text-sm sm:text-base ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -139,7 +146,7 @@ const Footer: React.FC = () => {
             </ul>
           </div>
 
-          
+          {/* About */}
           <div>
             <h3 className={`font-semibold mb-4 text-sm sm:text-base ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -150,14 +157,14 @@ const Footer: React.FC = () => {
               <p className={`text-sm ${
                 theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
               }`}>
-                Blogspot is crafted with passion for storytelling and beautiful design.
+                WriterSpace is crafted with passion for storytelling and beautiful design.
               </p>
               <div className={`text-xs ${
                 theme === 'dark' ? 'text-gray-500' : 'text-gray-500'
               }`}>
-                <p className="mb-1">Created with <Heart className="h-4 w-4 text-red-500 fill-current" /> by:</p>
-                <p className="font-medium">Vaibhav</p>
-                <p>Powered by Coffee</p>
+                <p className="mb-1">Created by:</p>
+                <p className="font-medium">vaibhav with <Heart className="h-4 w-4 text-red-500 fill-current" /></p>
+                <p>Powered by Koffee</p>
               </div>
             </div>
           </div>
@@ -171,7 +178,7 @@ const Footer: React.FC = () => {
             theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
           }`}>
             <p className="flex items-center justify-center sm:justify-start space-x-1">
-              <span>© {currentYear} Blogspot. Made with</span>
+              <span>© {currentYear} WriterSpace. Made with</span>
               <Heart className="h-4 w-4 text-red-500 fill-current" />
               <span>for writers and readers.</span>
             </p>

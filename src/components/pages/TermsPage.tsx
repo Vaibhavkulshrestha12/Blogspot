@@ -102,6 +102,7 @@ const TermsPage: React.FC = () => {
         </p>
       </div>
 
+      {/* Terms Sections */}
       <div className="space-y-8">
         {sections.map((section, index) => (
           <div key={index} className={`rounded-2xl p-8 border ${
@@ -135,7 +136,7 @@ const TermsPage: React.FC = () => {
         ))}
       </div>
 
-      
+      {/* Additional Sections */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
         <div className={`p-8 rounded-2xl border ${
           theme === 'dark'
@@ -174,6 +175,7 @@ const TermsPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Contact Section */}
       <div className={`mt-12 p-8 rounded-2xl border ${
         theme === 'dark'
           ? 'bg-gray-800/50 border-gray-700/50'
@@ -212,7 +214,7 @@ const TermsPage: React.FC = () => {
         </div>
       </div>
 
-      
+      {/* Changes Notice */}
       <div className={`mt-8 p-6 rounded-xl border ${
         theme === 'dark'
           ? 'bg-blue-500/10 border-blue-500/20'

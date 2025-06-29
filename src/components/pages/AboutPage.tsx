@@ -40,14 +40,14 @@ const AboutPage: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      
+      {/* Hero Section */}
       <div className="text-center mb-16">
         <h1 className={`text-4xl sm:text-5xl font-bold mb-6 ${
           theme === 'dark' ? 'text-white' : 'text-gray-900'
         }`}>
           About{' '}
           <span className="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
-            Blogspot
+            WriterSpace
           </span>
         </h1>
         <p className={`text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed ${
@@ -58,7 +58,7 @@ const AboutPage: React.FC = () => {
         </p>
       </div>
 
-      
+      {/* Mission Section */}
       <div className={`rounded-2xl p-8 mb-16 border ${
         theme === 'dark'
           ? 'bg-gray-800/50 border-gray-700/50'
@@ -72,13 +72,13 @@ const AboutPage: React.FC = () => {
         <p className={`text-lg leading-relaxed text-center max-w-3xl mx-auto ${
           theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
         }`}>
-          Blogspot exists to provide a beautiful, distraction-free environment where writers 
+          WriterSpace exists to provide a beautiful, distraction-free environment where writers 
           can share their thoughts, stories, and poetry with the world. We believe that every 
           voice deserves to be heard and every story deserves to be told with elegance and grace.
         </p>
       </div>
 
-      
+      {/* Values Section */}
       <div className="mb-16">
         <h2 className={`text-3xl font-bold mb-12 text-center ${
           theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -110,7 +110,7 @@ const AboutPage: React.FC = () => {
         </div>
       </div>
 
-      
+      {/* Team Section */}
       <div className="mb-16">
         <h2 className={`text-3xl font-bold mb-12 text-center ${
           theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -145,6 +145,7 @@ const AboutPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Contact CTA */}
       <div className={`text-center p-8 rounded-2xl border ${
         theme === 'dark'
           ? 'bg-gradient-to-r from-gray-800/50 to-gray-700/50 border-gray-700/50'

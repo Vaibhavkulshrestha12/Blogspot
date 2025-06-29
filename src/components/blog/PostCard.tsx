@@ -15,12 +15,10 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const [loading, setLoading] = React.useState(false);
   const [localReactions, setLocalReactions] = React.useState(post.reactions);
 
-  
   const userHasLiked = hasUserReacted(post.id, 'likes');
   const userHasDisliked = hasUserReacted(post.id, 'dislikes');
-  const userHasShared = hasUserReacted(post.id, 'shares');
 
-  
+
   React.useEffect(() => {
     setLocalReactions(post.reactions);
   }, [post.reactions]);
@@ -34,7 +32,6 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     if (hasReacted || loading) return;
     
     setLoading(true);
-    
     
     setLocalReactions(prev => ({
       ...prev,
@@ -63,7 +60,6 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     
     setLoading(true);
 
-    
     setLocalReactions(prev => ({
       ...prev,
       shares: prev.shares + 1
@@ -90,7 +86,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         await navigator.clipboard.writeText(url);
         await updateReactions(post.id, 'shares');
         
-        
+       
         const button = e.currentTarget as HTMLButtonElement;
         const span = button.querySelector('span:last-child');
         if (span) {
@@ -102,7 +98,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         }
       } catch (error) {
         console.error('Failed to copy to clipboard:', error);
-      
+        
         setLocalReactions(prev => ({
           ...prev,
           shares: prev.shares - 1
@@ -132,11 +128,13 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         : 'bg-white hover:bg-gray-50 border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md'
     }`}>
       {post.imageUrl && (
-        <div className="aspect-video overflow-hidden">
+        <div className="w-full overflow-hidden" style={{ aspectRatio: '16/9' }}>
           <img 
             src={post.imageUrl} 
             alt={post.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            style={{ objectFit: 'cover' }}
+            loading="lazy"
           />
         </div>
       )}
@@ -216,7 +214,6 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
           </div>
         </div>
 
-        
         <div className={`flex items-center justify-center space-x-3 sm:space-x-6 mt-6 pt-4 border-t ${
           theme === 'dark' ? 'border-gray-700/50' : 'border-gray-200'
         }`}>
