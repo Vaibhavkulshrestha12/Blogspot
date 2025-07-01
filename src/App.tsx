@@ -2,7 +2,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import BlogLayout from './components/blog/BlogLayout';
 import BlogHome from './components/blog/BlogHome';
-import BlogOnly from './components/blog/blogonly';
+import BlogOnly from './components/blog/BlogOnly';
 import PoetryHome from './components/blog/PoetryHome';
 import PostView from './components/blog/PostView';
 import AdminLayout from './components/admin/AdminLayout';
@@ -17,7 +17,7 @@ function App() {
   return (
     <Router>
       <Routes>
-      
+    
         <Route path="/" element={<BlogLayout />}>
           <Route index element={<BlogHome />} />
           <Route path="blog" element={<BlogOnly />} />
@@ -29,6 +29,7 @@ function App() {
           <Route path="terms" element={<TermsPage />} />
         </Route>
 
+      
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="post/:id" element={<PostEditor />} />
