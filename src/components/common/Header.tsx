@@ -22,7 +22,7 @@ const Header: React.FC = () => {
       } backdrop-blur-sm border-b sticky top-0 z-40 transition-colors`}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo - Responsive */}
+           
             <Link 
               to="/" 
               className={`flex items-center space-x-2 ${
@@ -32,7 +32,7 @@ const Header: React.FC = () => {
               <div className="p-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 group-hover:from-amber-400 group-hover:to-orange-400 transition-all duration-300">
                 <PenTool className="h-5 w-5 text-white" />
               </div>
-              {/* Show text only on medium screens and up */}
+             
               <span className={`text-xl font-bold hidden md:block ${
                 theme === 'dark' 
                   ? 'bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent'
@@ -42,7 +42,7 @@ const Header: React.FC = () => {
               </span>
             </Link>
 
-            {/* Desktop Navigation */}
+            
             <nav className="hidden lg:flex items-center space-x-6">
               {!isAdminRoute && (
                 <>
@@ -52,6 +52,17 @@ const Header: React.FC = () => {
                       theme === 'dark' ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
                     } transition-colors flex items-center space-x-1 ${
                       location.pathname === '/' ? 'text-amber-500' : ''
+                    }`}
+                  >
+                    
+                 
+                  </Link>
+                  <Link 
+                    to="/blog" 
+                    className={`${
+                      theme === 'dark' ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'
+                    } transition-colors flex items-center space-x-1 ${
+                      location.pathname === '/blog' ? 'text-amber-500' : ''
                     }`}
                   >
                     <BookOpen className="h-4 w-4" />
@@ -71,7 +82,7 @@ const Header: React.FC = () => {
                 </>
               )}
 
-              {/* Theme Toggle */}
+             
               <button
                 onClick={toggleTheme}
                 className={`p-2 rounded-lg transition-colors ${
@@ -136,9 +147,9 @@ const Header: React.FC = () => {
               )}
             </nav>
 
-            {/* Mobile/Tablet Controls */}
+            
             <div className="lg:hidden flex items-center space-x-2">
-              {/* Theme Toggle for Mobile */}
+            
               <button
                 onClick={toggleTheme}
                 className={`p-2 rounded-lg transition-colors ${
@@ -150,7 +161,6 @@ const Header: React.FC = () => {
                 {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </button>
 
-              {/* Sign In Button for Mobile (when not authenticated) */}
               {!isAuthenticated && (
                 <button
                   onClick={() => setShowAuthModal(true)}
@@ -173,7 +183,7 @@ const Header: React.FC = () => {
             </div>
           </div>
 
-          {/* Mobile Menu */}
+         
           {mobileMenuOpen && (
             <div className={`lg:hidden border-t ${
               theme === 'dark' ? 'border-gray-800 bg-gray-900/95' : 'border-gray-200 bg-white/95'
@@ -188,6 +198,18 @@ const Header: React.FC = () => {
                         theme === 'dark' ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                       } transition-colors flex items-center space-x-2 px-3 py-2 rounded-md ${
                         location.pathname === '/' ? 'text-amber-500 bg-amber-500/10' : ''
+                      }`}
+                    >
+                      
+                      
+                    </Link>
+                    <Link 
+                      to="/blog" 
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`${
+                        theme === 'dark' ? 'text-gray-300 hover:text-white hover:bg-gray-800' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                      } transition-colors flex items-center space-x-2 px-3 py-2 rounded-md ${
+                        location.pathname === '/blog' ? 'text-amber-500 bg-amber-500/10' : ''
                       }`}
                     >
                       <BookOpen className="h-4 w-4" />

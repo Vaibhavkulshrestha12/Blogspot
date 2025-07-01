@@ -18,10 +18,33 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
   const userHasLiked = hasUserReacted(post.id, 'likes');
   const userHasDisliked = hasUserReacted(post.id, 'dislikes');
 
-
   React.useEffect(() => {
     setLocalReactions(post.reactions);
   }, [post.reactions]);
+
+ 
+  const cleanHtmlContent = (html: string): string => {
+   
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    
+  
+    const textContent = tempDiv.textContent || tempDiv.innerText || '';
+    
+    return textContent.replace(/\s+/g, ' ').trim();
+  };
+
+  const getCleanExcerpt = (content: string, excerpt?: string): string => {
+    if (excerpt) {
+      return cleanHtmlContent(excerpt);
+    }
+    
+    
+    const cleanContent = cleanHtmlContent(content);
+    return cleanContent.length > 150 
+      ? cleanContent.substring(0, 150) + '...'
+      : cleanContent;
+  };
 
   const handleReaction = async (type: 'likes' | 'dislikes', e: React.MouseEvent) => {
     e.preventDefault();
@@ -69,12 +92,12 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
       try {
         await navigator.share({
           title: post.title,
-          text: post.excerpt,
+          text: getCleanExcerpt(post.content, post.excerpt),
           url: url
         });
         await updateReactions(post.id, 'shares');
       } catch (error) {
-        
+       
         setLocalReactions(prev => ({
           ...prev,
           shares: prev.shares - 1
@@ -86,7 +109,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         await navigator.clipboard.writeText(url);
         await updateReactions(post.id, 'shares');
         
-       
+        
         const button = e.currentTarget as HTMLButtonElement;
         const span = button.querySelector('span:last-child');
         if (span) {
@@ -176,7 +199,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
           <p className={`text-base sm:text-lg leading-relaxed line-clamp-3 ${
             theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
           }`}>
-            {post.excerpt}
+            {getCleanExcerpt(post.content, post.excerpt)}
           </p>
         </Link>
 
@@ -214,6 +237,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
           </div>
         </div>
 
+       
         <div className={`flex items-center justify-center space-x-3 sm:space-x-6 mt-6 pt-4 border-t ${
           theme === 'dark' ? 'border-gray-700/50' : 'border-gray-200'
         }`}>

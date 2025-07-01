@@ -43,7 +43,7 @@ const PostView: React.FC = () => {
             href="/"
             className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white px-6 py-3 rounded-lg transition-all duration-300 font-medium"
           >
-            Back to Blog
+            Back to Home
           </a>
         </div>
       </div>
@@ -85,7 +85,7 @@ const PostView: React.FC = () => {
         )}
         
         <div className="p-8 sm:p-12">
-          {/* Header */}
+         
           <header className="mb-8">
             <div className={`flex items-center space-x-4 text-sm mb-6 ${
               theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
@@ -143,14 +143,12 @@ const PostView: React.FC = () => {
             )}
           </header>
 
-          {/* Content */}
           <div className={`prose prose-lg max-w-none ${
             theme === 'dark' ? 'prose-invert' : ''
           }`}>
             {renderContent(post.content)}
           </div>
 
-          {/* Reactions */}
           <div className={`mt-12 pt-8 border-t ${
             theme === 'dark' ? 'border-gray-700/50' : 'border-gray-200'
           }`}>
@@ -159,7 +157,7 @@ const PostView: React.FC = () => {
         </div>
       </article>
 
-      {/* Custom styles for content rendering */}
+     
       <style jsx global>{`
         .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
           color: ${theme === 'dark' ? '#f3f4f6' : '#111827'};
