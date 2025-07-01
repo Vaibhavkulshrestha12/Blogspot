@@ -17,7 +17,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Public Blog Routes */}
+      
         <Route path="/" element={<BlogLayout />}>
           <Route index element={<BlogHome />} />
           <Route path="blog" element={<BlogOnly />} />
@@ -29,7 +29,6 @@ function App() {
           <Route path="terms" element={<TermsPage />} />
         </Route>
 
-        {/* Admin Routes */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="post/:id" element={<PostEditor />} />
