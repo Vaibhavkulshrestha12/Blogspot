@@ -82,7 +82,6 @@ export const useBlog = () => {
     return state.posts.find(post => post.id === id) || null;
   };
 
-  // Remove image upload functionality since storage is not available
   const uploadImage = async (file: File): Promise<string> => {
     throw new Error('Image upload is not available. Please use external image URLs.');
   };
@@ -95,13 +94,13 @@ export const useBlog = () => {
       authorId: user.id,
       publishedAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      reactions: { likes: 0, dislikes: 0, shares: 0 }
+      reactions: { likes: 0, dislikes: 0, shares: 0 },
+      isRecommended: postData.isRecommended || false
     };
 
     const docRef = await addDoc(collection(db, POSTS_COLLECTION), newPost);
     const createdPost = { id: docRef.id, ...newPost };
 
-    // Send newsletter notification if post is published
     if (postData.status === 'published') {
       const postUrl = `${window.location.origin}/post/${docRef.id}`;
       await notifySubscribers(postData.title, postData.excerpt, postUrl);
@@ -122,7 +121,6 @@ export const useBlog = () => {
         updatedAt: new Date().toISOString()
       });
 
-      // Send newsletter notification if post is being published for the first time
       if (!wasPublished && updates.status === 'published') {
         const post = getPost(id);
         if (post) {
@@ -150,21 +148,41 @@ export const useBlog = () => {
     }
   };
 
+  const toggleRecommendation = async (postId: string): Promise<boolean> => {
+    if (!user || user.role !== 'admin') {
+      throw new Error('Only admins can toggle recommendations');
+    }
+
+    try {
+      const post = getPost(postId);
+      if (!post) return false;
+
+      const postRef = doc(db, POSTS_COLLECTION, postId);
+      await updateDoc(postRef, {
+        isRecommended: !post.isRecommended,
+        updatedAt: new Date().toISOString()
+      });
+
+      return true;
+    } catch (error) {
+      console.error('Error toggling recommendation:', error);
+      return false;
+    }
+  };
+
   const updateReactions = async (postId: string, type: 'likes' | 'dislikes' | 'shares'): Promise<boolean> => {
     try {
-      // Check if user has already reacted using localStorage
+      
       const localReactions = JSON.parse(localStorage.getItem('blog_reactions') || '{}');
       const reactionKey = `${postId}_${type}`;
       
       if (localReactions[reactionKey]) {
-        return false; // Already reacted
+        return false; 
       }
       
-      // Mark as reacted in localStorage
       localReactions[reactionKey] = true;
       localStorage.setItem('blog_reactions', JSON.stringify(localReactions));
       
-      // Update the post's reaction count in Firebase
       const postRef = doc(db, POSTS_COLLECTION, postId);
       await updateDoc(postRef, {
         [`reactions.${type}`]: increment(1)
@@ -174,7 +192,6 @@ export const useBlog = () => {
     } catch (error) {
       console.error('Error updating reactions:', error);
       
-      // Revert localStorage change if Firebase update failed
       const localReactions = JSON.parse(localStorage.getItem('blog_reactions') || '{}');
       const reactionKey = `${postId}_${type}`;
       delete localReactions[reactionKey];
@@ -192,8 +209,12 @@ export const useBlog = () => {
     return posts;
   };
 
+  const getRecommendedPosts = (): Post[] => {
+    return state.posts.filter(post => post.status === 'published' && post.isRecommended);
+  };
+
   const getUserReaction = async (postId: string): Promise<string | null> => {
-    // Check local storage for user reactions
+   
     const localReactions = JSON.parse(localStorage.getItem('blog_reactions') || '{}');
     for (const type of ['likes', 'dislikes', 'shares']) {
       if (localReactions[`${postId}_${type}`]) {
@@ -215,8 +236,10 @@ export const useBlog = () => {
     createPost,
     updatePost,
     deletePost,
+    toggleRecommendation,
     updateReactions,
     getPublishedPosts,
+    getRecommendedPosts,
     getUserReaction,
     hasUserReacted,
     uploadImage

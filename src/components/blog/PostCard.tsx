@@ -22,13 +22,11 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     setLocalReactions(post.reactions);
   }, [post.reactions]);
 
- 
   const cleanHtmlContent = (html: string): string => {
    
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
     
-  
     const textContent = tempDiv.textContent || tempDiv.innerText || '';
     
     return textContent.replace(/\s+/g, ' ').trim();
@@ -38,7 +36,6 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
     if (excerpt) {
       return cleanHtmlContent(excerpt);
     }
-    
     
     const cleanContent = cleanHtmlContent(content);
     return cleanContent.length > 150 
@@ -97,7 +94,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         });
         await updateReactions(post.id, 'shares');
       } catch (error) {
-       
+     
         setLocalReactions(prev => ({
           ...prev,
           shares: prev.shares - 1
@@ -108,7 +105,6 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
       try {
         await navigator.clipboard.writeText(url);
         await updateReactions(post.id, 'shares');
-        
         
         const button = e.currentTarget as HTMLButtonElement;
         const span = button.querySelector('span:last-child');
@@ -237,14 +233,14 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
           </div>
         </div>
 
-       
-        <div className={`flex items-center justify-center space-x-3 sm:space-x-6 mt-6 pt-4 border-t ${
+        
+        <div className={`flex items-center justify-center space-x-2 sm:space-x-4 mt-6 pt-4 border-t ${
           theme === 'dark' ? 'border-gray-700/50' : 'border-gray-200'
         }`}>
           <button
             onClick={(e) => handleReaction('likes', e)}
             disabled={userHasLiked || loading}
-            className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-2 rounded-full transition-all duration-300 text-sm ${
+            className={`flex items-center space-x-1 px-2 sm:px-3 py-2 rounded-full transition-all duration-300 text-xs sm:text-sm ${
               userHasLiked
                 ? 'bg-red-500/20 text-red-400 cursor-not-allowed'
                 : theme === 'dark'
@@ -252,14 +248,14 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                   : 'bg-gray-100 hover:bg-red-50 text-gray-600 hover:text-red-500'
             } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            <ThumbsUp className={`h-4 w-4 ${userHasLiked ? 'fill-current' : ''}`} />
+            <ThumbsUp className={`h-3 w-3 sm:h-4 sm:w-4 ${userHasLiked ? 'fill-current' : ''}`} />
             <span className="font-medium">{localReactions.likes}</span>
           </button>
 
           <button
             onClick={(e) => handleReaction('dislikes', e)}
             disabled={userHasDisliked || loading}
-            className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-2 rounded-full transition-all duration-300 text-sm ${
+            className={`flex items-center space-x-1 px-2 sm:px-3 py-2 rounded-full transition-all duration-300 text-xs sm:text-sm ${
               userHasDisliked
                 ? 'bg-gray-600/20 text-gray-400 cursor-not-allowed'
                 : theme === 'dark'
@@ -267,20 +263,20 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                   : 'bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-500'
             } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            <ThumbsDown className={`h-4 w-4 ${userHasDisliked ? 'fill-current' : ''}`} />
+            <ThumbsDown className={`h-3 w-3 sm:h-4 sm:w-4 ${userHasDisliked ? 'fill-current' : ''}`} />
             <span className="font-medium">{localReactions.dislikes}</span>
           </button>
 
           <button
             onClick={handleShare}
             disabled={loading}
-            className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-2 rounded-full transition-all duration-300 text-sm ${
+            className={`flex items-center space-x-1 px-2 sm:px-3 py-2 rounded-full transition-all duration-300 text-xs sm:text-sm ${
               theme === 'dark'
                 ? 'bg-gray-700/50 hover:bg-blue-500/20 text-gray-300 hover:text-blue-400'
                 : 'bg-gray-100 hover:bg-blue-50 text-gray-600 hover:text-blue-500'
             } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            <Share2 className="h-4 w-4" />
+            <Share2 className="h-3 w-3 sm:h-4 sm:w-4" />
             <span className="font-medium">{localReactions.shares}</span>
           </button>
         </div>

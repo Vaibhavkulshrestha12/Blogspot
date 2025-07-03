@@ -12,6 +12,7 @@ export interface Post {
   readTime: number;
   category: 'blog' | 'poetry';
   imageUrl?: string;
+  isRecommended?: boolean; 
   reactions: {
     likes: number;
     dislikes: number;

@@ -3,19 +3,20 @@ import { useBlog } from '../../hooks/useBlog';
 import { useTheme } from '../../contexts/ThemeContext';
 import PostCard from './PostCard';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { BookOpen, Heart, Filter, Grid, List } from 'lucide-react';
+import { BookOpen, Heart, Filter, Grid, List, Star } from 'lucide-react';
 
 const BlogHome: React.FC = () => {
-  const { getPublishedPosts, loading, error } = useBlog();
+  const { getPublishedPosts, getRecommendedPosts, loading, error } = useBlog();
   const { theme } = useTheme();
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'blog' | 'poetry'>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
 
+ 
   const allPosts = getPublishedPosts();
   const blogPosts = getPublishedPosts('blog');
   const poetryPosts = getPublishedPosts('poetry');
+  const recommendedPosts = getRecommendedPosts();
 
- 
   const filteredPosts = selectedCategory === 'all' 
     ? allPosts 
     : selectedCategory === 'blog' 
@@ -49,7 +50,7 @@ const BlogHome: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-    
+      
       <div className="text-center mb-12 sm:mb-16">
         <h1 className={`text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 leading-tight ${
           theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -67,6 +68,7 @@ const BlogHome: React.FC = () => {
         </p>
       </div>
 
+    
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
         <div className={`text-center p-4 sm:p-6 rounded-xl border ${
           theme === 'dark'
@@ -129,6 +131,7 @@ const BlogHome: React.FC = () => {
         </div>
       </div>
 
+     
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         
         <div className="flex items-center space-x-1">
@@ -213,89 +216,92 @@ const BlogHome: React.FC = () => {
         </div>
       </div>
 
-      {filteredPosts.length === 0 ? (
-        <div className="text-center py-12 sm:py-16 px-4">
-          <div className="p-4 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 w-fit mx-auto mb-6">
-            {selectedCategory === 'blog' ? (
-              <BookOpen className="h-8 w-8 text-white" />
-            ) : selectedCategory === 'poetry' ? (
-              <Heart className="h-8 w-8 text-white" />
-            ) : (
-              <Filter className="h-8 w-8 text-white" />
-            )}
+      {recommendedPosts.length > 0 && (
+        <div className="mb-12 sm:mb-16">
+          <div className="flex items-center space-x-3 mb-8">
+            <div className="p-3 rounded-full bg-gradient-to-r from-amber-500 to-orange-500">
+              <Star className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className={`text-2xl sm:text-3xl font-bold ${
+                theme === 'dark' ? 'text-white' : 'text-gray-900'
+              }`}>
+                Recommended by Writer
+              </h2>
+              <p className={`${
+                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+              }`}>
+                Handpicked stories and poems that showcase our best work
+              </p>
+            </div>
           </div>
-          <h2 className={`text-xl sm:text-2xl font-bold mb-4 ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>
-            {selectedCategory === 'all' 
-              ? 'No Posts Yet' 
-              : selectedCategory === 'blog'
-                ? 'No Blog Posts Yet'
-                : 'No Poetry Yet'
-            }
-          </h2>
-          <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-sm sm:text-base`}>
-            {selectedCategory === 'all' 
-              ? 'Check back soon for new content.' 
-              : `Check back soon for new ${selectedCategory === 'blog' ? 'blog posts' : 'poetry'}.`
-            }
-          </p>
-        </div>
-      ) : (
-        <div className={
-          viewMode === 'grid' 
-            ? 'grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8'
-            : 'space-y-6 sm:space-y-8'
-        }>
-          {filteredPosts.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))}
+          
+          <div className={
+            viewMode === 'grid' 
+              ? 'grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8'
+              : 'space-y-6 sm:space-y-8'
+          }>
+            {recommendedPosts.map((post) => (
+              <PostCard key={post.id} post={post} />
+            ))}
+          </div>
         </div>
       )}
 
-      {allPosts.length > 0 && (
-        <div className={`mt-16 text-center p-8 rounded-2xl border ${
-          theme === 'dark'
-            ? 'bg-gradient-to-r from-gray-800/50 to-gray-700/50 border-gray-700/50'
-            : 'bg-gradient-to-r from-gray-50 to-white border-gray-200 shadow-lg'
+
+
+      <div className="mb-8">
+        <h2 className={`text-2xl sm:text-3xl font-bold mb-8 ${
+          theme === 'dark' ? 'text-white' : 'text-gray-900'
         }`}>
-          <h3 className={`text-2xl font-bold mb-4 ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>
-            Enjoying Our Content?
-          </h3>
-          <p className={`mb-6 max-w-2xl mx-auto ${
-            theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-          }`}>
-            Subscribe to our newsletter to get notified when we publish new stories and poems. 
-            Join our community of readers and writers.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="#newsletter"
-              onClick={(e) => {
-                e.preventDefault();
-                document.querySelector('footer')?.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="inline-flex items-center justify-center space-x-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white px-6 py-3 rounded-lg transition-all duration-300 font-medium"
-            >
-              <Heart className="h-5 w-5" />
-              <span>Subscribe to Newsletter</span>
-            </a>
-            <a
-              href="/about"
-              className={`inline-flex items-center justify-center space-x-2 px-6 py-3 rounded-lg border transition-all duration-300 font-medium ${
-                theme === 'dark'
-                  ? 'border-gray-600 text-gray-300 hover:bg-gray-700'
-                  : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              <BookOpen className="h-5 w-5" />
-              <span>Learn More About Us</span>
-            </a>
+          {selectedCategory === 'all' 
+            ? 'All Posts' 
+            : selectedCategory === 'blog'
+              ? 'Blog Posts'
+              : 'Poetry Collection'
+          }
+        </h2>
+
+        {filteredPosts.length === 0 ? (
+          <div className="text-center py-12 sm:py-16 px-4">
+            <div className="p-4 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 w-fit mx-auto mb-6">
+              {selectedCategory === 'blog' ? (
+                <BookOpen className="h-8 w-8 text-white" />
+              ) : selectedCategory === 'poetry' ? (
+                <Heart className="h-8 w-8 text-white" />
+              ) : (
+                <Filter className="h-8 w-8 text-white" />
+              )}
+            </div>
+            <h3 className={`text-xl sm:text-2xl font-bold mb-4 ${
+              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            }`}>
+              {selectedCategory === 'all' 
+                ? 'No Posts Yet' 
+                : selectedCategory === 'blog'
+                  ? 'No Blog Posts Yet'
+                  : 'No Poetry Yet'
+              }
+            </h3>
+            <p className={`${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'} text-sm sm:text-base`}>
+              {selectedCategory === 'all' 
+                ? 'Check back soon for new content.' 
+                : `Check back soon for new ${selectedCategory === 'blog' ? 'blog posts' : 'poetry'}.`
+              }
+            </p>
           </div>
-        </div>
-      )}
+        ) : (
+          <div className={
+            viewMode === 'grid' 
+              ? 'grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8'
+              : 'space-y-6 sm:space-y-8'
+          }>
+            {filteredPosts.map((post) => (
+              <PostCard key={post.id} post={post} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

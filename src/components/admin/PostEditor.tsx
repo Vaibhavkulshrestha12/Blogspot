@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Save, Eye, EyeOff, ArrowLeft, FileText, Link as LinkIcon, X, Upload } from 'lucide-react';
+import { Save, Eye, EyeOff, ArrowLeft, FileText, Link as LinkIcon, X, Upload, Star } from 'lucide-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useBlog } from '../../hooks/useBlog';
 import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../contexts/ThemeContext';
-
+import { Post } from '../../types';
 
 const PostEditor: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -27,7 +27,8 @@ const PostEditor: React.FC = () => {
     status: 'draft' as 'draft' | 'published',
     category: 'blog' as 'blog' | 'poetry',
     readTime: 1,
-    imageUrl: ''
+    imageUrl: '',
+    isRecommended: false
   });
 
   const [tagInput, setTagInput] = useState('');
@@ -46,14 +47,15 @@ const PostEditor: React.FC = () => {
         status: existingPost.status,
         category: existingPost.category,
         readTime: existingPost.readTime,
-        imageUrl: existingPost.imageUrl || ''
+        imageUrl: existingPost.imageUrl || '',
+        isRecommended: existingPost.isRecommended || false
       });
     }
   }, [existingPost]);
 
   const calculateReadTime = (content: string): number => {
     const wordsPerMinute = 200;
-    const text = content.replace(/<[^>]*>/g, ''); 
+    const text = content.replace(/<[^>]*>/g, ''); // Remove HTML tags
     const wordCount = text.trim().split(/\s+/).length;
     return Math.max(1, Math.ceil(wordCount / wordsPerMinute));
   };
@@ -70,13 +72,13 @@ const PostEditor: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-  
+    // Validate file type
     if (!file.type.startsWith('image/')) {
       alert('Please select an image file.');
       return;
     }
 
-    
+    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       alert('Image size should be less than 5MB.');
       return;
@@ -85,7 +87,8 @@ const PostEditor: React.FC = () => {
     setImageUploading(true);
 
     try {
-      
+      // For now, we'll use a placeholder URL since we don't have storage setup
+      // In a real app, you would upload to Firebase Storage or another service
       const reader = new FileReader();
       reader.onload = (event) => {
         const imageUrl = event.target?.result as string;
@@ -154,7 +157,7 @@ const PostEditor: React.FC = () => {
     return <div dangerouslySetInnerHTML={{ __html: content }} />;
   };
 
- 
+  // Quill editor modules and formats
   const modules = {
     toolbar: [
       [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
@@ -187,7 +190,7 @@ const PostEditor: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    
+      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center space-x-4">
           <button
@@ -250,7 +253,7 @@ const PostEditor: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
+        {/* Editor */}
         <div className="space-y-6">
           <div className={`rounded-xl p-6 border ${
             theme === 'dark'
@@ -301,6 +304,26 @@ const PostEditor: React.FC = () => {
                   <option value="blog">Blog</option>
                   <option value="poetry">Poetry</option>
                 </select>
+              </div>
+
+              {/* Recommendation Toggle */}
+              <div className="flex items-center space-x-3">
+                <input
+                  type="checkbox"
+                  id="isRecommended"
+                  checked={post.isRecommended}
+                  onChange={(e) => setPost(prev => ({ ...prev, isRecommended: e.target.checked }))}
+                  className="w-4 h-4 text-amber-500 bg-gray-100 border-gray-300 rounded focus:ring-amber-500 focus:ring-2"
+                />
+                <label 
+                  htmlFor="isRecommended" 
+                  className={`flex items-center space-x-2 text-sm font-medium cursor-pointer ${
+                    theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                  }`}
+                >
+                  <Star className={`h-4 w-4 ${post.isRecommended ? 'text-amber-500 fill-current' : 'text-gray-400'}`} />
+                  <span>Recommend this post</span>
+                </label>
               </div>
 
               <div>
@@ -481,6 +504,7 @@ const PostEditor: React.FC = () => {
           </div>
         </div>
 
+        {/* Preview */}
         {showPreview && (
           <div className={`rounded-xl p-6 border ${
             theme === 'dark'
@@ -508,6 +532,9 @@ const PostEditor: React.FC = () => {
                   theme === 'dark' ? 'text-white' : 'text-gray-900'
                 }`}>
                   {post.title}
+                  {post.isRecommended && (
+                    <Star className="inline-block h-6 w-6 text-amber-500 fill-current ml-2" />
+                  )}
                 </h1>
               )}
               <div className={`${
@@ -520,7 +547,7 @@ const PostEditor: React.FC = () => {
         )}
       </div>
 
-     
+      {/* Custom styles for dark theme Quill editor */}
       <style jsx global>{`
         .quill-dark .ql-toolbar {
           border-color: #374151 !important;

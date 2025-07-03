@@ -1,17 +1,25 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, FileText, Eye, Edit, Trash2, Calendar, Clock, Tag, BookOpen, Heart } from 'lucide-react';
+import { Plus, FileText, Eye, Edit, Trash2, Calendar, Clock, Tag, BookOpen, Heart, Star, StarOff } from 'lucide-react';
 import { useBlog } from '../../hooks/useBlog';
 import { useTheme } from '../../contexts/ThemeContext';
 import LoadingSpinner from '../common/LoadingSpinner';
 
 const AdminDashboard: React.FC = () => {
-  const { posts, loading, deletePost } = useBlog();
+  const { posts, loading, deletePost, toggleRecommendation } = useBlog();
   const { theme } = useTheme();
 
   const handleDelete = async (id: string, title: string) => {
     if (window.confirm(`Are you sure you want to delete "${title}"?`)) {
       await deletePost(id);
+    }
+  };
+
+  const handleToggleRecommendation = async (id: string, currentStatus: boolean) => {
+    try {
+      await toggleRecommendation(id);
+    } catch (error) {
+      alert('Failed to update recommendation status');
     }
   };
 
@@ -27,6 +35,7 @@ const AdminDashboard: React.FC = () => {
   const draftPosts = posts.filter(post => post.status === 'draft');
   const blogPosts = posts.filter(post => post.category === 'blog');
   const poetryPosts = posts.filter(post => post.category === 'poetry');
+  const recommendedPosts = posts.filter(post => post.isRecommended);
 
   if (loading) {
     return (
@@ -38,7 +47,7 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      
+      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className={`text-4xl font-bold mb-2 ${
@@ -59,8 +68,8 @@ const AdminDashboard: React.FC = () => {
         </Link>
       </div>
 
-     
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
         <div className={`rounded-xl p-6 border ${
           theme === 'dark'
             ? 'bg-gray-800/50 border-gray-700/50'
@@ -74,7 +83,7 @@ const AdminDashboard: React.FC = () => {
               <p className={`text-sm ${
                 theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
               }`}>
-                Published Posts
+                Published
               </p>
               <p className={`text-2xl font-bold ${
                 theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -98,7 +107,7 @@ const AdminDashboard: React.FC = () => {
               <p className={`text-sm ${
                 theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
               }`}>
-                Draft Posts
+                Drafts
               </p>
               <p className={`text-2xl font-bold ${
                 theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -146,7 +155,7 @@ const AdminDashboard: React.FC = () => {
               <p className={`text-sm ${
                 theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
               }`}>
-                Poetry Posts
+                Poetry
               </p>
               <p className={`text-2xl font-bold ${
                 theme === 'dark' ? 'text-white' : 'text-gray-900'
@@ -156,9 +165,33 @@ const AdminDashboard: React.FC = () => {
             </div>
           </div>
         </div>
+
+        <div className={`rounded-xl p-6 border ${
+          theme === 'dark'
+            ? 'bg-gray-800/50 border-gray-700/50'
+            : 'bg-white border-gray-200 shadow-sm'
+        }`}>
+          <div className="flex items-center">
+            <div className="p-3 bg-amber-500/20 rounded-lg">
+              <Star className="h-6 w-6 text-amber-400" />
+            </div>
+            <div className="ml-4">
+              <p className={`text-sm ${
+                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+              }`}>
+                Recommended
+              </p>
+              <p className={`text-2xl font-bold ${
+                theme === 'dark' ? 'text-white' : 'text-gray-900'
+              }`}>
+                {recommendedPosts.length}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
-     
+      {/* Posts Table */}
       <div className={`rounded-xl border overflow-hidden ${
         theme === 'dark'
           ? 'bg-gray-800/50 border-gray-700/50'
@@ -238,10 +271,13 @@ const AdminDashboard: React.FC = () => {
                   }`}>
                     <td className="px-6 py-4">
                       <div>
-                        <div className={`font-medium ${
+                        <div className={`font-medium flex items-center space-x-2 ${
                           theme === 'dark' ? 'text-white' : 'text-gray-900'
                         }`}>
-                          {post.title}
+                          <span>{post.title}</span>
+                          {post.isRecommended && (
+                            <Star className="h-4 w-4 text-amber-400 fill-current" />
+                          )}
                         </div>
                         <div className={`text-sm flex items-center space-x-4 mt-1 ${
                           theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
@@ -299,6 +335,21 @@ const AdminDashboard: React.FC = () => {
                             <Eye className="h-4 w-4" />
                           </Link>
                         )}
+                        <button
+                          onClick={() => handleToggleRecommendation(post.id, post.isRecommended || false)}
+                          className={`transition-colors ${
+                            post.isRecommended
+                              ? 'text-amber-400 hover:text-amber-300'
+                              : 'text-gray-400 hover:text-amber-400'
+                          }`}
+                          title={post.isRecommended ? 'Remove from recommendations' : 'Add to recommendations'}
+                        >
+                          {post.isRecommended ? (
+                            <Star className="h-4 w-4 fill-current" />
+                          ) : (
+                            <StarOff className="h-4 w-4" />
+                          )}
+                        </button>
                         <Link
                           to={`/admin/post/${post.id}`}
                           className="text-amber-400 hover:text-amber-300 transition-colors"
