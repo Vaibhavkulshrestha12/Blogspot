@@ -6,7 +6,6 @@ import 'react-quill/dist/quill.snow.css';
 import { useBlog } from '../../hooks/useBlog';
 import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../contexts/ThemeContext';
-import { Post } from '../../types';
 
 const PostEditor: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -55,7 +54,7 @@ const PostEditor: React.FC = () => {
 
   const calculateReadTime = (content: string): number => {
     const wordsPerMinute = 200;
-    const text = content.replace(/<[^>]*>/g, ''); // Remove HTML tags
+    const text = content.replace(/<[^>]*>/g, ''); 
     const wordCount = text.trim().split(/\s+/).length;
     return Math.max(1, Math.ceil(wordCount / wordsPerMinute));
   };
@@ -72,13 +71,12 @@ const PostEditor: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       alert('Please select an image file.');
       return;
     }
 
-    // Validate file size (max 5MB)
+   
     if (file.size > 5 * 1024 * 1024) {
       alert('Image size should be less than 5MB.');
       return;
@@ -87,8 +85,7 @@ const PostEditor: React.FC = () => {
     setImageUploading(true);
 
     try {
-      // For now, we'll use a placeholder URL since we don't have storage setup
-      // In a real app, you would upload to Firebase Storage or another service
+   
       const reader = new FileReader();
       reader.onload = (event) => {
         const imageUrl = event.target?.result as string;
@@ -157,7 +154,6 @@ const PostEditor: React.FC = () => {
     return <div dangerouslySetInnerHTML={{ __html: content }} />;
   };
 
-  // Quill editor modules and formats
   const modules = {
     toolbar: [
       [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
@@ -190,7 +186,7 @@ const PostEditor: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      {/* Header */}
+     
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center space-x-4">
           <button
@@ -253,7 +249,7 @@ const PostEditor: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Editor */}
+     
         <div className="space-y-6">
           <div className={`rounded-xl p-6 border ${
             theme === 'dark'
@@ -306,7 +302,6 @@ const PostEditor: React.FC = () => {
                 </select>
               </div>
 
-              {/* Recommendation Toggle */}
               <div className="flex items-center space-x-3">
                 <input
                   type="checkbox"
@@ -504,7 +499,6 @@ const PostEditor: React.FC = () => {
           </div>
         </div>
 
-        {/* Preview */}
         {showPreview && (
           <div className={`rounded-xl p-6 border ${
             theme === 'dark'
@@ -547,7 +541,6 @@ const PostEditor: React.FC = () => {
         )}
       </div>
 
-      {/* Custom styles for dark theme Quill editor */}
       <style jsx global>{`
         .quill-dark .ql-toolbar {
           border-color: #374151 !important;
